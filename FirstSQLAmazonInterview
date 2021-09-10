@@ -1,0 +1,46 @@
+
+Tables : 
+STREAMS (FACT)
+Fields :
+CUSTOMER_ID         INTEGER
+TITLE_ID            INTEGER
+START_DATETIME      TIMESTAMP
+MINUTES_STREAMED    FLOAT
+PRIMARY KEY (CUSTOMER_ID, TITLE_ID, START_DATETIME)
+
+TITLES (DIM)
+Fields :
+TITLE_ID            INTEGER (UNIQUE PK)
+TITLE_NAME          VARCHAR(255)
+GENRE               VARCHAR(255)
+LAUNCH_DATETIME     TIMESTAMP
+
+Query to give the total count of the number of streams and the total minutes streamed split by GENRE in month of 
+Expected : 
+GENRE   NUM_STREAMS NUM_MINUTES
+DRAMA   125435      4013920
+COMEDY  62718       2006960
+SCI_FI  12544       401392 (tel:12544401392)
+
+Sql : select t.genre, count(s.customer_id) as num_streams, sum(sminutes_streamed) as total_mins from streams s
+join titles t
+on t.title_id=s.title_id
+group by 1;
+
+Query to give CUSTOMER_ID, DATE, TITLE_ID showing only the first (earliest) TITLE_ID streamed by each customer on each day.
+
+expected : 
+CUSTOMER_ID TITLE_ID    START_DATETIME          MINUTES_STREAMED
+12345       2           2017-01-01 00:00:00     31
+12345       3           2017-01-01 02:24:00     23
+12345       5           2017-01-01 04:48:00     67
+12345       7           2017-01-02 00:00:00     23
+12345       2           2017-01-02 04:48:00     24
+12345       9           2017-01-03 00:00:00     23
+;
+select customer_id, min(start_datetime), from x group by 1 
+
+
+select customer_id, (START_DATETIME)::date as date, first_value() over(
+parition by cus
+)
