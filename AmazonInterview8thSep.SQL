@@ -1,3 +1,6 @@
+//The below solutions seems to be correct as I have cleared this round of interview
+
+
 ----------------- TABLES ------------------------------------------
 
 -- Table A: MERCHANTS (DIM), PRIMARY KEYS (MERCHANT_ID, MARKETPLACE_ID)
@@ -67,12 +70,11 @@ group by COUNTRY_OF_ORIGIN
 select sum(units), sum(sales*units),
 case 
 when 
-COUNTRY_OF_ORIGIN in ('DE', 'UK', 'IT') the COUNTRY_OF_ORIGIN
+COUNTRY_OF_ORIGIN in ('DE', 'UK', 'IT') then COUNTRY_OF_ORIGIN
 else ' ROTW' end
 from merchant m join sales s 
 on m.merchant_id=s.merchant_id and m.MARKETPLACE_ID=s.MARKETPLACE_ID
 where ORDER_DATE::date between '1/12/2017' and '31/12/2017'
-and COUNTRY_OF_ORIGIN ilike 'DE'
 group by COUNTRY_OF_ORIGIN
 
 ------------------------------------------------------------------------------
