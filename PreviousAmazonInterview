@@ -1,0 +1,81 @@
+Let’s assume that we have 3 tables:
+Cutomers:
+Customer_id 
+Name
+Town
+
+Orders:
+Order_id
+Customer_id
+Order_date
+
+Order_items:
+Order_item_id
+Order_id
+product_id
+Quantity
+Unit_price
+
+Provide the number of customers who spent during the last month
+-	From 0 and 200 
+-	From 200 and 500 
+-	And from 500 and 1000 
+
+select count(o.customer_id),
+case(
+    when qty*unit_price<=200 then 'range1'
+    when qty*unit_price >200 and qty*unit_price<=500 'range2'
+    when qty*unit_price >500 and qty*unit_price <=1000 'range3'
+     ) 
+     
+     from
+     order_items oi
+     join
+     orders o
+     using(order_id)
+     group by
+     case(
+    when qty*unit_price<=200 then 'range1'
+    when qty*unit_price >200 and qty*unit_price<=500 'range2'
+    when qty*unit_price >500 and qty*unit_price <=1000 'range3'
+     ) 
+     order by o.customer_id
+     
+     with price as (
+select customer_id, sum(quantity*unit_price) as total_spent
+from
+     order_items oi
+     join
+     orders o
+     using(order_id)
+     group by
+     customer_id) 
+     select count(customer_id), case
+     (
+         when total_spent<=200 then 'range1'
+         when total_spent>200 and total_spent<=500 then 'range2'
+         when total_spent >500 and total_spent<=100 then 'range3') as range
+         from price
+         group by case
+     (
+         when total_spent<=200 then 'range1'
+         when total_spent>200 and total_spent<=500 then 'range2'
+         when total_spent >500 and total_spent<=100 then 'range3')
+     
+     
+     Provide the 3rd order done by the customer named John since the beginning of this month 
+     select Order_id from
+     Orders O
+     join Cutomers C
+     using (Customer_id)
+     where lower(c.name) like '%john%'
+     and where Order_date between '2021/03/01' and '2021/03/24'
+     
+     
+     Provide the list of items that were ordered by 3 different customers during the 30 days
+     
+     select order_id, count(distinct customer_id)
+     from
+     ....
+     group by order_id
+     having count(distinct customer_id) = 3
